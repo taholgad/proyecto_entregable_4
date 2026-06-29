@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Historias de Usuario - Task Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .story-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .story-card {
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .story-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 6px 12px rgba(102, 126, 234, 0.15);
+    }
+
+    .story-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+    }
+
+    .story-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .priority-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: bold;
+        color: white;
+    }
+
+    .priority-low {
+        background: #95e1d3;
+    }
+
+    .priority-medium {
+        background: #f8b500;
+    }
+
+    .priority-high {
+        background: #ff6b6b;
+    }
+
+    .priority-critical {
+        background: #d63031;
+    }
+
+    .story-meta {
+        display: flex;
+        gap: 10px;
+        margin: 10px 0;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .story-goal {
+        margin: 15px 0;
+        padding: 10px;
+        background: #f5f5f5;
+        border-left: 4px solid #667eea;
+        font-style: italic;
+    }
+
+    .story-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .story-actions button {
+        flex: 1;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: all 0.3s;
+    }
+
+    .form-container {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: inherit;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .submit-btn {
+        background: #667eea;
+        color: white;
+        padding: 12px 30px;
+        font-size: 1em;
+        font-weight: bold;
+    }
+
+    .submit-btn:hover {
+        background: #5568d3;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+
+    .empty-state p {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>📚 Historias de Usuario</h2>
+
+<div class="form-container">
+    <h3>➕ Crear nueva historia</h3>
+    <form method="post" action="/api/user-stories">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="project">Proyecto</label>
+                <input type="text" id="project" name="project" placeholder="Ej: E-commerce" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Rol</label>
+                <input type="text" id="role" name="role" placeholder="Ej: usuario, admin" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="goal">Objetivo</label>
+            <input type="text" id="goal" name="goal" placeholder="¿Qué quiere lograr?" required>
+        </div>
+
+        <div class="form-group">
+            <label for="reason">Razón</label>
+            <input type="text" id="reason" name="reason" placeholder="¿Por qué lo quiere?" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descripción (opcional)</label>
+            <textarea id="description" name="description" placeholder="Detalles adicionales..."></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="priority">Prioridad</label>
+                <select id="priority" name="priority">
+                    <option value="low">Baja</option>
+                    <option value="medium" selected>Media</option>
+                    <option value="high">Alta</option>
+                    <option value="critical">Crítica</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="story_points">Story Points (1-8)</label>
+                <input type="number" id="story_points" name="story_points" min="1" max="8" value="5">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary submit-btn">Crear Historia</button>
+    </form>
+</div>
+
+{% if stories %}
+<div class="story-grid">
+    {% for story in stories %}
+    <div class="story-card">
+        <div class="story-header">
+            <div class="story-title">{{ story.project }}</div>
+            <div class="priority-badge priority-{{ story.priority }}">{{ story.priority.upper() }}</div>
+        </div>
+        <div class="story-meta">
+            <span>👤 {{ story.role }}</span>
+            <span>⭐ {{ story.story_points }} puntos</span>
+            <span>⏱️ {{ story.effort_hours }}h</span>
+        </div>
+        <div class="story-goal">
+            <strong>Como {{ story.role }} quiero {{ story.goal }}</strong><br>
+            <small>Para: {{ story.reason }}</small>
+        </div>
+        {% if story.description %}
+        <p style="color: #666; font-size: 0.95em;">{{ story.description }}</p>
+        {% endif %}
+        <div class="story-actions">
+            <a href="/user-stories/{{ story.id }}/tasks" class="btn btn-primary" style="text-decoration: none;">Ver Tareas</a>
+            <button class="btn btn-success" onclick="generateTasks({{ story.id }})">🤖 Generar IA</button>
+            <button class="btn btn-danger" onclick="deleteStory({{ story.id }})">Eliminar</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>📭 No hay historias de usuario aún</p>
+    <p>Crea tu primera historia usando el formulario anterior</p>
+</div>
+{% endif %}
+
+<script>
+function generateTasks(storyId) {
+    if (confirm('¿Generar tareas con IA para esta historia?')) {
+        fetch(`/api/tasks/user-stories/${storyId}/generate-tasks`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(`✅ Se generaron ${data.length} tareas`);
+            setTimeout(() => location.reload(), 1000);
+        })
+        .catch(err => alert('❌ Error: ' + err));
+    }
+}
+
+function deleteStory(storyId) {
+    if (confirm('¿Eliminar esta historia?')) {
+        fetch(`/api/user-stories/${storyId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('✅ Historia eliminada');
+            location.reload();
+        })
+        .catch(err => alert('❌ Error: ' + err));
+    }
+}
+</script>
+{% endblock %}

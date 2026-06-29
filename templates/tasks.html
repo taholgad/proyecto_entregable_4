@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}Tareas - Task Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tasks-container {
+        display: grid;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .task-card {
+        background: white;
+        border-left: 5px solid #667eea;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .task-card:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .task-card.pending {
+        border-left-color: #95e1d3;
+    }
+
+    .task-card.in_progress {
+        border-left-color: #ffd93d;
+    }
+
+    .task-card.in_review {
+        border-left-color: #6bcf7f;
+    }
+
+    .task-card.done {
+        border-left-color: #4d96ff;
+        opacity: 0.8;
+    }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .task-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: bold;
+        color: white;
+    }
+
+    .status-pending {
+        background: #95e1d3;
+    }
+
+    .status-in_progress {
+        background: #ffd93d;
+        color: #333;
+    }
+
+    .status-in_review {
+        background: #6bcf7f;
+    }
+
+    .status-done {
+        background: #4d96ff;
+    }
+
+    .task-meta {
+        display: flex;
+        gap: 20px;
+        margin: 10px 0;
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .task-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .priority-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+
+    .priority-low {
+        background: #95e1d3;
+    }
+
+    .priority-medium {
+        background: #f8b500;
+    }
+
+    .priority-high {
+        background: #ff6b6b;
+    }
+
+    .priority-blocking {
+        background: #d63031;
+    }
+
+    .task-description {
+        margin: 12px 0;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .task-risks {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        font-size: 0.9em;
+    }
+
+    .task-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .task-actions button,
+    .task-actions a {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+
+    .filter-bar {
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .filter-bar label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .filter-bar select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #999;
+    }
+
+    .form-container {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+        font-family: inherit;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 15px;
+    }
+
+    .submit-btn {
+        background: #667eea;
+        color: white;
+        padding: 12px 30px;
+        font-size: 1em;
+        font-weight: bold;
+    }
+
+    .submit-btn:hover {
+        background: #5568d3;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .stat-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .stat-box h3 {
+        font-size: 2em;
+        margin-bottom: 5px;
+    }
+
+    .stat-box p {
+        font-size: 0.9em;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>✓ Tareas</h2>
+
+<div class="stats">
+    <div class="stat-box">
+        <h3>{{ total_tasks }}</h3>
+        <p>Tareas totales</p>
+    </div>
+    <div class="stat-box">
+        <h3>{{ pending_count }}</h3>
+        <p>Pendientes</p>
+    </div>
+    <div class="stat-box">
+        <h3>{{ in_progress_count }}</h3>
+        <p>En progreso</p>
+    </div>
+    <div class="stat-box">
+        <h3>{{ done_count }}</h3>
+        <p>Completadas</p>
+    </div>
+</div>
+
+<div class="form-container">
+    <h3>➕ Crear nueva tarea</h3>
+    <form method="post" action="/api/tasks">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="title">Título</label>
+                <input type="text" id="title" name="title" placeholder="Ej: Implementar login" required>
+            </div>
+            <div class="form-group">
+                <label for="assigned_to">Asignado a</label>
+                <input type="text" id="assigned_to" name="assigned_to" placeholder="Ej: María" required>
+            </div>
+            <div class="form-group">
+                <label for="priority">Prioridad</label>
+                <select id="priority" name="priority">
+                    <option value="low">Baja</option>
+                    <option value="medium" selected>Media</option>
+                    <option value="high">Alta</option>
+                    <option value="blocking">Bloqueante</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="effort_hours">Horas</label>
+                <input type="number" id="effort_hours" name="effort_hours" min="0" step="0.5" value="1" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea id="description" name="description" placeholder="Describa la tarea..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary submit-btn">Crear Tarea</button>
+    </form>
+</div>
+
+<div class="filter-bar">
+    <label for="status-filter">Filtrar por estado:</label>
+    <select id="status-filter" onchange="filterTasks(this.value)">
+        <option value="">Todos</option>
+        <option value="pending">Pendiente</option>
+        <option value="in_progress">En progreso</option>
+        <option value="in_review">En revisión</option>
+        <option value="done">Completado</option>
+    </select>
+</div>
+
+{% if tasks %}
+<div class="tasks-container">
+    {% for task in tasks %}
+    <div class="task-card {{ task.status }}" data-status="{{ task.status }}">
+        <div class="task-header">
+            <div>
+                <div class="task-title">{{ task.title }}</div>
+                <div class="task-meta">
+                    <span>
+                        <span class="priority-indicator priority-{{ task.priority }}"></span>
+                        {{ task.priority.upper() }}
+                    </span>
+                    <span>👤 {{ task.assigned_to }}</span>
+                    <span>⏱️ {{ task.effort_hours }}h</span>
+                </div>
+            </div>
+            <div class="status-badge status-{{ task.status }}">{{ task.status }}</div>
+        </div>
+
+        <div class="task-description">{{ task.description }}</div>
+
+        {% if task.risk_analysis %}
+        <div class="task-risks">
+            <strong>⚠️ Riesgo:</strong> {{ task.risk_analysis }}<br>
+            <strong>🛡️ Mitigación:</strong> {{ task.risk_mitigation or 'No especificado' }}
+        </div>
+        {% endif %}
+
+        <div class="task-actions">
+            <button class="btn btn-success" onclick="updateTaskStatus({{ task.id }}, 'in_progress')">▶️ Iniciar</button>
+            <button class="btn btn-success" onclick="updateTaskStatus({{ task.id }}, 'done')">✅ Completar</button>
+            <button class="btn btn-danger" onclick="deleteTask({{ task.id }})">🗑️ Eliminar</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <p>📭 No hay tareas aún</p>
+    <p>Crea tu primera tarea o genera automáticamente desde una historia</p>
+</div>
+{% endif %}
+
+<script>
+function filterTasks(status) {
+    const cards = document.querySelectorAll('.task-card');
+    cards.forEach(card => {
+        if (status === '' || card.dataset.status === status) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function updateTaskStatus(taskId, newStatus) {
+    const statusMap = {
+        'pending': 'Pendiente',
+        'in_progress': 'En progreso',
+        'in_review': 'En revisión',
+        'done': 'Completado'
+    };
+
+    fetch(`/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            status: newStatus
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(`✅ Tarea actualizada a: ${statusMap[newStatus]}`);
+        location.reload();
+    })
+    .catch(err => alert('❌ Error: ' + err));
+}
+
+function deleteTask(taskId) {
+    if (confirm('¿Eliminar esta tarea?')) {
+        fetch(`/api/tasks/${taskId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('✅ Tarea eliminada');
+            location.reload();
+        })
+        .catch(err => alert('❌ Error: ' + err));
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Implementar autenticación",
+    "description": "Agregar JWT a la API",
+    "priority": "high",
+    "effort_hours": 8.5,
+    "status": "pending",
+    "assigned_to": "Juan",
+    "category": null,
+    "risk_analysis": null,
+    "risk_mitigation": null
+  },
+  {
+    "id": 2,
+    "title": "Implementar autenticación",
+    "description": "Agregar JWT a la API",
+    "priority": "high",
+    "effort_hours": 8.5,
+    "status": "pending",
+    "assigned_to": "Juan",
+    "category": null,
+    "risk_analysis": null,
+    "risk_mitigation": null
+  },
+  {
+    "id": 3,
+    "title": "Implementar autenticación",
+    "description": "Agregar JWT a la API",
+    "priority": "high",
+    "effort_hours": 18.5,
+    "status": "pending",
+    "assigned_to": "Pepe",
+    "category": null,
+    "risk_analysis": null,
+    "risk_mitigation": null
+  }
+]

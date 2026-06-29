@@ -1,0 +1,188 @@
+{
+  "info": {
+    "name": "Task Manager API",
+    "description": "Colección de ejemplo para probar la API FastAPI con Postman.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Tareas",
+      "item": [
+        {
+          "name": "Crear tarea",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Implementar autenticación\",\n  \"description\": \"Agregar JWT a la API\",\n  \"priority\": \"high\",\n  \"effort_hours\": 8.5,\n  \"status\": \"pending\",\n  \"assigned_to\": \"Juan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar tareas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            }
+          }
+        },
+        {
+          "name": "Obtener tarea por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "1"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar tarea",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\",\n  \"effort_hours\": 6.0\n}"
+            }
+          }
+        },
+        {
+          "name": "Eliminar tarea",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tasks/1",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "IA",
+      "item": [
+        {
+          "name": "Describir tarea",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ai/tasks/describe",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "tasks", "describe"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"Crear login JWT\",\n  \"description\": \"\",\n  \"priority\": \"high\",\n  \"effort_hours\": 0.0,\n  \"status\": \"pending\",\n  \"assigned_to\": \"juan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Categorizar tarea",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ai/tasks/categorize",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "tasks", "categorize"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"Crear login JWT\",\n  \"description\": \"\",\n  \"priority\": \"high\",\n  \"effort_hours\": 0.0,\n  \"status\": \"pending\",\n  \"assigned_to\": \"juan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Estimar esfuerzo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ai/tasks/estimate",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "tasks", "estimate"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"Crear login JWT\",\n  \"description\": \"\",\n  \"priority\": \"high\",\n  \"effort_hours\": 0.0,\n  \"status\": \"pending\",\n  \"assigned_to\": \"juan\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Auditar riesgos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/ai/tasks/audit",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "tasks", "audit"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"title\": \"Crear login JWT\",\n  \"description\": \"\",\n  \"priority\": \"high\",\n  \"effort_hours\": 0.0,\n  \"status\": \"pending\",\n  \"assigned_to\": \"juan\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
